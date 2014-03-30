@@ -62,24 +62,20 @@ def upload_file() :
 def uploaded_files(timestring) : 
     file_url_list = [url_for('uploaded_file',timestring=timestring, filename=aFile).lstrip('/') \
                                          for aFile in getfiles(UPLOAD_FOLDER + '/' + timestring)]
- 
     file_url_list_final = file_url_list
 
-    print file_url_list_final 
+    return render_template('list_files.html',file_url_list=file_url_list_final)
+
+@app.route('/uploads/')
+def uploaded_dirs():
+    file_url_list = [url_for('uploaded_files', timestring=aDir).lstrip('/') for aDir in getdirs(UPLOAD_FOLDER)]
+    file_url_list_final = file_url_list
+
     return render_template('list_files.html',file_url_list=file_url_list_final)
 
 
-@app.route('/uploads/>')
-def uploaded_folders() : 
-    dir_url_list = [url_for('uploads',timestring=aDir).lstrip('/') \
-                                         for aDir in getdirs(UPLOAD_FOLDER)]
- 
-    dir_url_list_final = dir_url_list
 
-   
-    return render_template('list_files.html',file_url_list=dir_url_list_final)
-   
-    
+
 @app.route('/uploads/<timestring>/<filename>')
 def uploaded_file(timestring,filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'] + '/' + timestring,
