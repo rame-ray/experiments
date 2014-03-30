@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
 from flask import Flask, request, redirect, url_for, render_template, redirect, send_from_directory
+import time
 from werkzeug.utils import secure_filename
 import os
-from flask.ext.autoindex import AutoIndex
+
 
 
 UPLOAD_FOLDER='/home/mvaidya/misc2/flask_stuff/uploads'
@@ -14,7 +15,7 @@ ALLOWED_EXTENSIONS=set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__) 
 
-#AutoIndex(app, browse_root=UPLOAD_FOLDER,add_url_rules=False )
+timestring = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()).replace(':','-').replace(' ','-')
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
