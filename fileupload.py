@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 import os
 from os import listdir, path
 from os.path import isdir, isfile, join
-
+from celery import Celery
 
 
 UPLOAD_FOLDER=os.path.abspath('uploads')
@@ -14,11 +14,19 @@ UPLOAD_FOLDER=os.path.abspath('uploads')
 
 ALLOWED_EXTENSIONS=set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
-app = Flask(__name__) 
 
 
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+def make_celery(app):
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
 
 
 def allowed_file(filename) :
@@ -42,6 +50,19 @@ def getfiles(mypath) :
         pass
     return(retarr) 
 
+
+
+app = Flask(__name__) 
+
+app.config.update(
+    CELERY_BROKER_URL='redis://guest@localhost:6379',
+    CELERY_RESULT_BACKEND='redis://guest@localhost:6379'
+    
+)
+
+celery = make_celery(app)
+
+
 @app.route('/', methods=['GET', 'POST']) 
 def upload_file() :
     if request.method == 'POST' :
@@ -52,11 +73,25 @@ def upload_file() :
             os.mkdir(UPLOAD_FOLDER + '/' + timestring)
             abs_path = UPLOAD_FOLDER + '/' + timestring
             file.save(os.path.join(abs_path, filename))
+            """
             return redirect(url_for('uploaded_file', timestring=timestring, filename=filename))
+            """
+            from fileupload import long_task
+            long_task.delay(30)
+            
+ 
+            return redirect(url_for('uploaded_files', timestring=timestring))
 
     return render_template('upload.html') 
 
  
+@celery.task(name='long_task')
+
+def long_task(delay) :
+    print "BEGIN..", time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
+    time.sleep(delay)
+    print "END..", time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
+    return(delay)
 
 @app.route('/uploads/<timestring>')
 def uploaded_files(timestring) : 
@@ -78,7 +113,7 @@ def uploaded_dirs():
 
 @app.route('/uploads/<timestring>/<filename>')
 def uploaded_file(timestring,filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'] + '/' + timestring,
+    return send_from_directory(UPLOAD_FOLDER + '/' + timestring,
                                filename)
 
 
@@ -90,3 +125,12 @@ if __name__ == '__main__':
     app.host='0.0.0.0'
     app.debug = True
     app.run()
+
+
+"""
+Install notes :
+
+pip install celery 
+pip install redis
+pip install flask
+"""
