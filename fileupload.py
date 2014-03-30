@@ -56,7 +56,9 @@ app = Flask(__name__)
 
 app.config.update(
     CELERY_BROKER_URL='redis://guest@localhost:6379',
-    CELERY_RESULT_BACKEND='redis://guest@localhost:6379'
+    CELERY_RESULT_BACKEND='redis://guest@localhost:6379',
+    UPLOAD_FOLDER=os.path.abspath('uploads')
+
     
 )
 
@@ -65,13 +67,16 @@ celery = make_celery(app)
 
 @app.route('/', methods=['GET', 'POST']) 
 def upload_file() :
+    print "MAHESH %s" % app.config['UPLOAD_FOLDER'] 
     if request.method == 'POST' :
         file = request.files['file']
         if file and allowed_file(file.filename) :
             filename=secure_filename(file.filename)
             timestring = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()).replace(':','-').replace(' ','-')
-            os.mkdir(UPLOAD_FOLDER + '/' + timestring)
-            abs_path = UPLOAD_FOLDER + '/' + timestring
+            print "MKDIR to %s" % app.config['UPLOAD_FOLDER'] + '/' + timestring
+
+            os.mkdir(app.config['UPLOAD_FOLDER'] + '/' + timestring)
+            abs_path = app.config['UPLOAD_FOLDER'] + '/' + timestring
             file.save(os.path.join(abs_path, filename))
             """
             return redirect(url_for('uploaded_file', timestring=timestring, filename=filename))
