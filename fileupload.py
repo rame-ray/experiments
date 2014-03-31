@@ -7,6 +7,7 @@ import os
 from os import listdir, path
 from os.path import isdir, isfile, join
 from celery import Celery
+from flask_bootstrap import Bootstrap
 
 
 UPLOAD_FOLDER=os.path.abspath('uploads')
@@ -51,8 +52,13 @@ def getfiles(mypath) :
     return(retarr) 
 
 
+def create_app():
+  app = Flask(__name__)
+  Bootstrap(app)
+  return app
 
-app = Flask(__name__) 
+
+app = create_app() 
 
 app.config.update(
     CELERY_BROKER_URL='redis://guest@localhost:6379',
@@ -122,7 +128,10 @@ def uploaded_file(timestring,filename):
                                filename)
 
 
-
+@app.route('/boottest/')
+def do_boottest() :
+    return render_template('test_boot.html') 
+    
 
 
 
@@ -138,4 +147,6 @@ Install notes :
 pip install celery 
 pip install redis
 pip install flask
+celery -A fileupload.celery  worker --loglevel=info
+pip install flask-bootstrap
 """

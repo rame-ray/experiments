@@ -1,7 +1,27 @@
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
+{% extends "tpv_base.html" %}
+{% block content %}
+
+  <div class="jumbotron">
+    <h2>Upload new File</h2>
     <form action="" method=post enctype=multipart/form-data>
       <p><input type=file name=file>
-         <input type=submit value=Upload>
+      <p> <input type=submit value=Upload>
     </form>
+  </div>
+
+
+    <p>
+      <div class="jumbotron">
+        <h2>Ground Rules</h2>
+        <p><h4>
+           This example is a quick exercise to illustrate how the default, static navbar and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.
+        </h4>
+       </p>
+       <p>General Guidelines</p>
+       <ul>
+          <li>Do not overload system by doing agressive submissions</li>
+          <li>Dumps will be remove periodically</li>
+       </ul>
+      </div>
+
+{% endblock %}

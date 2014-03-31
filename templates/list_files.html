@@ -1,5 +1,10 @@
+{% extends "tpv_base.html" %}
+{% block content %}
+
 {% for item in file_url_list %}
      <p>
         <a href="{{ request.url_root }}{{ item }}">{{ item }}</a>
      </p>
 {% endfor %}
+
+{% endblock %}
