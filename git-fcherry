@@ -3,6 +3,7 @@
 import subprocess
 import argparse
 import sys
+import re
 
 usage = 'usage: %(prog)s --from  --to --file'
 
@@ -29,7 +30,7 @@ for cherry_item in cherry_list_array :
 
        diff_tree_list, diff_tree_error = diff_tree_pipe.communicate() 
        for file_in_this_commit in diff_tree_list.split('\n') :
-          if file_in_this_commit.startswith(args.file_path) :
+          if args.file_path.strip() == file_in_this_commit.strip() : 
              print "file => %s found in -- %s" % (args.file_path, cherry_commit)
 
 
