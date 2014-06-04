@@ -1,0 +1,64 @@
+
+<HTML>
+<HEAD>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#hide_error").click(function(){
+    $(".error").hide();
+    $(".success").show();
+  });
+});
+$(document).ready(function(){
+  $("#hide_success").click(function(){
+    $(".success").hide();
+    $(".error").show();
+  });
+});
+$(document).ready(function(){
+  $("#show_all").click(function(){
+    $(".success").show();
+    $(".error").show();
+  });
+});
+</script>
+
+<link rel="stylesheet" type="text/css" href="xmahesh.css" />
+<style>
+.error {
+   background-color:#FF0000;
+}
+
+.warn {
+   background-color:#FFFF66;
+}
+
+.success {
+   background-color:#33CC33 ;
+}
+.right {
+}
+
+.left {
+   float:left ;
+}
+
+div {
+border-width: 1px;
+
+}
+</style>
+</HEAD>
+<BODY>
+<div id="hide_error"><a href="#">Hide Error</a></div>
+<div id="hide_success"><a href="#">Hide Success</a></div>
+	<div id="show_all"><a href="#">Bare All</a></div>
+<div class="error"> REAL Error </div>
+<div class="success"> REAL SUCCESS </div>
+<div class="error"> REAL Error </div>
+<div class="success"> REAL SUCCESS </div>
+
+</div>
+</BODY>
+</HTML>
+
